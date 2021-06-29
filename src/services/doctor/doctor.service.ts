@@ -1,36 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { Doctor } from 'src/doctors/doctor';
-import {v4 as uuid} from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Doctor } from 'src/doctors/doctor.entity';
+import { Repository } from 'typeorm';
+
+interface IDoctor {
+    id: number;
+    name: string;
+    crm: number;
+    telephone: number;
+    cellphone: number;
+    zipcode: number;
+}
 
 @Injectable()
 export class DoctorService {
-    private doctors: Doctor[] = [];
+
+    constructor(@InjectRepository(Doctor) private readonly repository: Repository<Doctor>) {}
  
-    public getAll(): Doctor[] {
-        return this.doctors;
+    public async getAll(): Promise<Doctor[]> {
+        return await this.repository.find();
     }
  
-    public get(id: string): Doctor {
-        const doctor = this.doctors.find(p => p.id === id);
-        return doctor;
+    public async get(id: number): Promise<Doctor> {
+        return this.repository.findOne(id)
     }
  
-    public create(doctor: Doctor): string {
-        try {
-            if (doctor.id === undefined) {
-                doctor.id = uuid();
-            }
-            this.doctors.push(doctor);
-            return doctor.id;
-        } catch {
-            return "";
-        }
+    public async create(entity: IDoctor): Promise<number>  {
+        return await this.repository.insert(entity)
+            .then(d => {
+                return d.identifiers[0] as any as number;
+            }, (err) => {
+                return 0
+        }   )
     }
  
-    public update(id: string, doctor: Doctor): boolean {
-        if (id !== doctor.id) {
+    public async update(id: number, entity: IDoctor): Promise<boolean> {
+        if (id !== entity.id) {
             return false;
         }
+
+        await this.repository.update(id, entity)
+        return true
     }
  
     // Adicionar o metodo de soft delete

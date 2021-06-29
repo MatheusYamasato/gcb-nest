@@ -10,6 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev": "nodemon nest",
+    "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -30,6 +31,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
+    "ts-node-dev": "^1.1.6",
     "typeorm": "^0.2.34",
     "uuid": "^8.3.2"
   },
